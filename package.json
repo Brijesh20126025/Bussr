@@ -1,0 +1,34 @@
+{
+  "name": "bussr-test",
+  "version": "0.0.1",
+  "description": "Bussr test project",
+  "main": "index.js",
+  "scripts": {
+    "start": "node out/app.js",
+    "build": "tsc -p ."
+  },
+  "author": "",
+  "license": "ISC",
+  "dependencies": {
+    "@types/express": "^4.17.11",
+    "@types/lodash": "^4.14.170",
+    "@types/moment": "^2.13.0",
+    "@types/node": "^15.6.0",
+    "@types/nodemon": "^1.19.0",
+    "body-parser": "^1.19.0",
+    "express": "^4.17.1",
+    "joi": "^17.4.0",
+    "jsonwebtoken": "^8.5.1",
+    "lodash": "^4.17.21",
+    "moment": "^2.29.1",
+    "mongoose": "^5.12.10",
+    "morgan": "^1.10.0",
+    "swagger-jsdoc": "^1.3.0",
+    "swagger-ui-dist": "^3.49.0",
+    "swagger-ui-express": "^4.1.6",
+    "typescript": "^4.2.4"
+  },
+  "devDependencies": {
+    "@types/morgan": "^1.9.2"
+  }
+}
