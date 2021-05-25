@@ -8,7 +8,7 @@ export function convertToDate(dateString : string) : Date {
     // if invalid date string fallback to current date.
     if(!date.isValid()) {
 
-        console.log("########### Invalid Date ", dateString);
+        console.error("########### Invalid Date ", dateString);
         return new Date();
     }
 

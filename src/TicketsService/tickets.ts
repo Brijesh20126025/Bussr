@@ -36,7 +36,7 @@ class Tickets {
                 );
         const {error, value} = schema.validate(ticketData);
         if(error) {
-            console.log("##### Joi validation Error %j", error, value);
+            console.error("##### Joi validation Error %j", error, value);
             let ApiError : IError = {
                 status : 400, 
                 message :"invalid data type info passed. pass the required type data",
@@ -130,7 +130,7 @@ class Tickets {
 
         let ticketId : string = req.params.ticket_id;
 
-        // validate if this paased id can be converted into 
+        // validate if this passed id can be converted into 
         // valid mongo db object Id. if not return error.
         let isValid : Boolean = ObjectId(ticketId).toString() === ticketId ? true : false; //true/false
         if(!isValid) {

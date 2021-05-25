@@ -18,7 +18,6 @@ class ErrorService {
             stack : error.stack,
             data : error.data
         }
-        console.log("Here ---- in error service ", errorData);
         res.status(error.status).json(errorData);
         return;
     }

@@ -14,10 +14,8 @@ const app : any = express();
 /*
     --------------------- SWAGGER -------------------
 */
-
 const pathToSwaggerUi = require('swagger-ui-dist').absolutePath()
 app.use(express.static(pathToSwaggerUi))
-
 
 const swaggerDefinition = {
     info: {
@@ -31,7 +29,6 @@ const swaggerDefinition = {
   
   // options for the swagger docs
 const options = {
-
     definition : {
         openapi : "3.0.0",
         info : {
@@ -44,14 +41,8 @@ const options = {
             {url : "http://localhost:5000"}
         ],
     },
-
     apis : ["./out/Routes/**/*.js"],
-
     swaggerDefinition : swaggerDefinition
-    // // import swaggerDefinitions
-    // swaggerDefinition: swaggerDefinition,
-    // // path to the API docs
-    // apis: ['./out/Routes/*.js'],
 };
   
   // initialize swagger-jsdoc
@@ -88,6 +79,7 @@ app.use('/api/v1/analytics', analytics);
 // Handle 404 routes.
 app.use(notFoundPage);
 
-app.listen(5000, () => {
-    console.log("Server running at port 5000");
+let PORT = process.env.PORT || 5000;
+app.listen(PORT, () => {
+    console.log("Server running at port " + PORT);
 });
