@@ -68,6 +68,7 @@ class Analytics {
                 message : "Successfully fetched the manual analytics data",
                 data : manualResult.result
             });
+            return;
         }
 
         // prepare the aggregation query for analytics.
@@ -166,6 +167,7 @@ class Analytics {
                 message : "Successfully fetched the manual analytics data",
                 data : manualResult.result
             });
+            return;
         }
 
         // prepare the aggregation query for analytics.

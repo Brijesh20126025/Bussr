@@ -7,7 +7,6 @@ import * as connectionManger from '../../DbService/workerConnection';
 import * as dateUtils from '../../utils/dateUtils';
 import * as _ from 'lodash';
 import { ITicket } from '../../Interfaces/ITicket';
-import { sortBy } from 'lodash';
 
 class ManualAnalytics {
 
@@ -73,7 +72,7 @@ function aggreagateUserAnalyticsData(data : any[]) {
             const doc : ITicket =  data[i];
             let ticket_creation_month : any = doc.ticket_creation_month;
             if(ticket_creation_month) {
-                map[ticket_creation_month] = (map[ticket_creation_month] ? map[ticket_creation_month] : 0) + 1;
+                map[ticket_creation_month] = (map[ticket_creation_month] ? map[ticket_creation_month] + 1 : 1);
             }
         }
 
@@ -81,14 +80,18 @@ function aggreagateUserAnalyticsData(data : any[]) {
             if(map[key]) {
                 let localData : any = {
                     month : key,
-                    total_visited_people : map[key]
+                    total_visited_people : Number(map[key])
                 }
                 aggreagationData.push(localData);
             }
         })
 
-        // sort the count/sum in descending order.
-        customSort(aggreagationData);
+        aggreagationData = _.orderBy(aggreagationData, 'total_visited_people', 'desc');
+        // aggreagationData.sort((a : any, b : any) => {
+        //     return b[1] - a[1];
+        // });
+        // // sort the count/sum in descending order.
+        // //customSort(aggreagationData);
 
         console.log("Aggregated Data in sorted order user analytics %j", aggreagationData);
 
@@ -130,9 +133,10 @@ function aggreagateProfitAnalyticsData(data : any[]) : any[] {
             }
         })
 
-         // sort the count/sum in descending order.
-         customSort(aggreagationData);
-         console.log("Aggregated Data in sorted order profit analytics %j", aggreagationData);
+        aggreagationData = _.orderBy(aggreagationData, 'profitSummary', 'desc');
+        //  // sort the count/sum in descending order.
+        //  customSort(aggreagationData);
+        //  console.log("Aggregated Data in sorted order profit analytics %j", aggreagationData);
 
         return aggreagationData;
     }

@@ -6,11 +6,19 @@ class DatabaseService {
             if(errorCheck(db)) {
                 return resolve({err : 'db instance is not valid', result : null});
             }
-    
-            db.collection(collectionName).insertMany(doc, function (err : any, result : any) {
-                db.close();
-                return resolve({ err, result });
-            });
+            
+            // handling the exception explicitly
+            // but in real senario clients needs to handle at their end.
+            try { 
+                db.collection(collectionName).insertMany(doc, function (err : any, result : any) {
+                    db.close();
+                    return resolve({ err, result });
+                });
+            }
+            catch(ex : any) {
+                console.error('### DB error ' + collectionName);
+                return resolve({err : ex, result : null});
+            }
         });
     }
     
@@ -20,11 +28,17 @@ class DatabaseService {
             if(errorCheck(db)) {
                 return resolve({err : 'db instance is not valid', result : null});
             }
-    
-            db.collection(collectionName).updateOne(filter, doc, function (err : any, result : any) {
-                db.close();
-                return resolve({ err, result });
-            });
+            
+            try {
+                db.collection(collectionName).updateOne(filter, doc, function (err : any, result : any) {
+                    db.close();
+                    return resolve({ err, result });
+                });
+            }
+            catch(ex : any) {
+                console.error('### DB error ' + collectionName);
+                return resolve({err : ex, result : null});
+            }
         });
     }
     
@@ -35,11 +49,17 @@ class DatabaseService {
             if(errorCheck(db)) {
                 return resolve({err : 'db instance is not valid', result : null});
             }
-    
-            db.collection(collectionName).deleteMany(query, options, function (err : any, result : any) {
-                db.close();
-                return resolve({ err, result });
-            });
+            
+            try {
+                db.collection(collectionName).deleteMany(query, options, function (err : any, result : any) {
+                    db.close();
+                    return resolve({ err, result });
+                });
+            }
+            catch(ex : any) {
+                console.error('### DB error ' + collectionName);
+                return resolve({err : ex, result : null});
+            }
         });
     }
 
@@ -68,7 +88,7 @@ class DatabaseService {
             db.collection(collectionName).find(query, options).toArray().then((dbres : any) => {
                 db.close();
                 return resolve({err : null, result : dbres});
-                   
+
             }).catch((dberr : any) => {
                 db.close();
                 return resolve({err : dberr, result : []});
