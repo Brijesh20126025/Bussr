@@ -84,29 +84,14 @@ function aggreagateUserAnalyticsData(data : any[]) {
                 }
                 aggreagationData.push(localData);
             }
-        })
-
+        });
         aggreagationData = _.orderBy(aggreagationData, 'total_visited_people', 'desc');
-        // aggreagationData.sort((a : any, b : any) => {
-        //     return b[1] - a[1];
-        // });
-        // // sort the count/sum in descending order.
-        // //customSort(aggreagationData);
-
-        console.log("Aggregated Data in sorted order user analytics %j", aggreagationData);
-
         return aggreagationData;
     }
     catch(ex : any) {
         console.error("### User Analytics : manual : aggreagateData - error in creating the manual aggreagate data");
         return [];
     }
-}
-
-function customSort(data : any[]) {
-    data.sort((i1 : any, i2 : any) => {
-        return i1[1] - i2[1];
-    });
 }
 
 function aggreagateProfitAnalyticsData(data : any[]) : any[] {
@@ -119,7 +104,7 @@ function aggreagateProfitAnalyticsData(data : any[]) : any[] {
             const doc : ITicket =  data[i];
             let ticket_creation_month : any = doc.ticket_creation_month;
             if(ticket_creation_month) {
-                map[ticket_creation_month] = (map[ticket_creation_month] ? map[ticket_creation_month] : 0) + doc.ticket_price;
+                map[ticket_creation_month] = (map[ticket_creation_month] ? map[ticket_creation_month] + doc.ticket_price : doc.ticket_price);
             }
         }
 
@@ -134,10 +119,6 @@ function aggreagateProfitAnalyticsData(data : any[]) : any[] {
         })
 
         aggreagationData = _.orderBy(aggreagationData, 'profitSummary', 'desc');
-        //  // sort the count/sum in descending order.
-        //  customSort(aggreagationData);
-        //  console.log("Aggregated Data in sorted order profit analytics %j", aggreagationData);
-
         return aggreagationData;
     }
     catch(ex : any) {
