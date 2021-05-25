@@ -6,27 +6,23 @@ import { DbService } from '../DbService';
 import {collectionNames} from '../DbService/collectionsName';
 import * as connectionManger from '../DbService/workerConnection';
 const ObjectId = require('mongodb').ObjectID;
-const mongoose = require('mongoose');
 const joi  = require('joi');
-
-import {isValidDateString, getMonthFromDate, getMonthNameFromMonthNumber } from '../utils/dateUtils';
-
+import * as dateUtils from '../utils/dateUtils';
 import * as _ from 'lodash';
 import { isArray } from 'lodash';
-import { bool, boolean } from 'joi';
 
 
 class Tickets {
 
     // ticket create
-    static async createTickets(req : Request, res : Response, next : Function) {
+    static async createTickets(req : any, res : Response, next : Function) {
 
         if(!req || !req.body || !req.body.ticketData) {
             let error : IError = {status : 400, message :"Missing required data/info"};
             return next(error);
         }
 
-        let ticketData : ITicket[] = req.body.ticketData;
+        let ticketData : any[] = req.body.ticketData;
 
         // validate the user input data.
         let schema;
@@ -39,19 +35,18 @@ class Tickets {
                     }).min(4).required()
                 );
         const {error, value} = schema.validate(ticketData);
-        console.log("##### Joi validation %j", error, value);
         if(error) {
             console.log("##### Joi validation Error %j", error, value);
             let ApiError : IError = {
                 status : 400, 
-                message :"invalid data type info passed. pass the required type info",
+                message :"invalid data type info passed. pass the required type data",
                 data : error
             };
             return next(ApiError);
         }
         // check if date string provided is valid date or not.
         for(let i = 0; i < ticketData.length; i++) {
-            let isValid : Boolean = isValidDateString(ticketData[i].performance_time);
+            let isValid : Boolean = dateUtils.isValidDateString(ticketData[i].performance_time);
             if(!isValid) {
                 let error : IError = {
                     status : 400,
@@ -59,13 +54,13 @@ class Tickets {
                     message : "Invalid performance time provided for this ticket data (sample ex - DD/MM/YYYY 10:30 400",
                 }
                 return next(error);
-                }
+            }
         }
 
         let dbTicketData : ITicket[] = [];
 
         for(let i = 0; i < ticketData.length; i++) {
-            let month : string = getMonthFromDate(ticketData[i].performance_time);
+            let month : string = dateUtils.getMonthFromDate(ticketData[i].performance_time);
 
             if(isNaN(Number(month))) {
                 let error : IError = {
@@ -77,10 +72,11 @@ class Tickets {
             }
             let dataToInsert : ITicket = {
                  customer_name : ticketData[i].customer_name,
-                 performance_time : ticketData[i].performance_time,
                  performance_title : ticketData[i].performance_title,
-                 ticket_creation_month : getMonthNameFromMonthNumber(Number(month)),
-                 ticket_price : ticketData[i].ticket_price
+                 performance_time : dateUtils.convertToDate(ticketData[i].performance_time),
+                 ticket_creation_month : dateUtils.getMonthNameFromMonthNumber(Number(month)),
+                 ticket_price : ticketData[i].ticket_price,
+                 user_id : req && req.user_id && req.user_id // insert the user_id which we had set in auth middleware we got if from the jwt token in auth layer.
             }
 
             dbTicketData.push(dataToInsert);
@@ -88,19 +84,22 @@ class Tickets {
 
         // create connection and insert this data in db.
         let conn : {err : any, connection : any} = await connectionManger.DbService.connectSync(constants.dbName);
-
         if(conn.err) {
             let error : IError = {status : 500, message :"Something went wrong. please try again"};
             console.error("### ticket :: creation :: error in db connection acquire");
             return next(error);
         }
-
         let dbConn = conn.connection;
+        let insertResult : {err : any , result : any}  = {err : null, result : null};
 
-        let insertResult : {err : any , result : any} = await DbService.insertManySync(dbConn, collectionNames.ticket, dbTicketData);
-
-        // close the connection after DB query.
-        dbConn.close();
+        try {
+            insertResult = await DbService.DatabaseService.insertManySync(dbConn, collectionNames.ticket, dbTicketData);
+        }
+        catch(ex : any) {
+            let error : IError = {status : 500, message :"Something went wrong. Please ensure to pass the correct data. Please try again", data : ex};
+            console.error("### ticket :: creation :: error in db query");
+            return next(error);
+        }
 
         if(insertResult.err) {
             let error : IError = {status : 500, message :"Error creating the tickets. Try again!"};
@@ -130,12 +129,10 @@ class Tickets {
         }
 
         let ticketId : string = req.params.ticket_id;
-        console.log("#### Object ID ", ticketId);
 
         // validate if this paased id can be converted into 
         // valid mongo db object Id. if not return error.
         let isValid : Boolean = ObjectId(ticketId).toString() === ticketId ? true : false; //true/false
-        console.log("### isvalid ", isValid);
         if(!isValid) {
             let error : IError = {status : 400, message :"Given id is not a valid id. Provide the correct Id"};
             return next(error);
@@ -146,8 +143,15 @@ class Tickets {
                                      req.body.ticketUpdateData[0] : req.body.ticketUpdateData;
 
         // prepare the update statements.
-        let ticket_id : any = ObjectId(ticketId);
-        console.log("##### convert object id ", ticket_id);
+        let ticket_id : any = null;
+        try {
+            ticket_id = ObjectId(ticketId);
+        }
+        catch(ex : any) {
+            let error : IError = {status : 500, message :"Incorrect ticket_id provided. Try again with valid Id"};
+            console.error("###### try block ticket :: updation :: error in converting the ticket_id to mongo ObjectId data update ", ex);
+            return next(error);
+        }
 
         let updateStatement : any = {
             "$set" : {}
@@ -161,6 +165,14 @@ class Tickets {
             }
         });
 
+        // We need to update the ticket_creation_month if we are updating the 
+        // perfomance_time field.
+        let performance_time_data : string = ticketUpdateData.performance_time;
+        if(performance_time_data && dateUtils.isValidDateString(performance_time_data)) {
+            let month = dateUtils.getMonthNameFromMonthNumber(Number(dateUtils.getMonthFromDate(performance_time_data)));
+            updateStatement['$set']['ticket_creation_month'] = month;
+        }
+
         // create connection and update this data in db.
         let conn : {err : any, connection : any} = await connectionManger.DbService.connectSync(constants.dbName);
 
@@ -171,16 +183,16 @@ class Tickets {
         }
 
         let dbConn = conn.connection;
+        let updateResult : {err : any , result : any} = {err : null, result : null};
 
-        console.log("##### DB connection acquired!!!");
-
-        console.log("##### update request fired!!!");
-        let updateResult : {err : any , result : any} = await DbService.updateOneWithOptions(dbConn, collectionNames.ticket, filter, updateStatement, {upsert : true, multi : true});
-
-        console.log("##### update request fired completed!!! %j", updateResult);
-
-        // close the connection after DB query.
-        dbConn.close();
+        try {
+            updateResult = await DbService.DatabaseService.updateOneWithOptions(dbConn, collectionNames.ticket, filter, updateStatement, {upsert : true, multi : true});
+        }
+        catch(ex : any) {
+            let error : IError = {status : 500, message :"Something went wrong. Please ensure to pass the correct data. Please try again", data : ex};
+            console.error("### ticket :: updation :: error in db query");
+            return next(error);
+        }
 
         if(updateResult.err) {
             let error : IError = {status : 500, message :"Error updating the tickets. Try again!"};
@@ -189,10 +201,15 @@ class Tickets {
         }
 
         // send the response that updation was successful.
+        let message : string = "tickets updated successfully!!";
+        let ticketUpdateCount : number =  _.get(updateResult.result, 'modifiedCount', 0);
+
+        if(!ticketUpdateCount || ticketUpdateCount == 0)
+            message = "No update performed. requested update data not found";
         res.status(200).json(
             {
-                status : 200, message : "tickets updated successfully!!", 
-                ticketUpdateCount : _.get(updateResult.result, 'modifiedCount', 0)
+                status : 200, message : message, 
+                ticketUpdateCount : ticketUpdateCount
             }
         );
     }
@@ -214,8 +231,6 @@ class Tickets {
             _id : {"$in" : objectIds}
         }
 
-        console.log("#### delete query %j", deleteQuery);
-
         // create connection and delete this data from db.
         let conn : {err : any, connection : any} = await connectionManger.DbService.connectSync(constants.dbName);
 
@@ -226,12 +241,16 @@ class Tickets {
         }
 
         let dbConn = conn.connection;
+        let deleteResult : {err : any , result : any} = {err : null, result : null};
 
-        let deleteResult : {err : any , result : any} = await DbService.deleteManyWithOptions(dbConn, collectionNames.ticket, deleteQuery, {multi : true});
-
-        console.log("#### Delete result %j ", deleteResult);
-        // close the connection after DB query.
-        dbConn.close();
+        try {
+            deleteResult = await DbService.DatabaseService.deleteManyWithOptions(dbConn, collectionNames.ticket, deleteQuery, {multi : true});
+        }
+        catch(ex : any) {
+            let error : IError = {status : 500, message :"Something went wrong. Please ensure to pass the correct data. Please try again", data : ex};
+            console.error("### ticket :: deletion :: error in db query");
+            return next(error);
+        }
 
         if(deleteResult.err) {
             let error : IError = {status : 500, message :"Error deleting the tickets. Try again!"};

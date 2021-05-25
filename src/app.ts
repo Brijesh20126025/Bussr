@@ -3,6 +3,7 @@ import * as bodyParser  from "body-parser";
 const morgan = require('morgan');
 import {users} from "./AuthService";
 import {tickets} from './TicketsService';
+import { analytics } from './AnalyticsService';
 import {notFoundPage} from './Routes/notFound/404'
 const swaggerJSDoc = require('swagger-jsdoc');
 const swaggerUI = require('swagger-ui-express');
@@ -82,6 +83,7 @@ app.use(bodyParser.json());
 // Routes.
 app.use('/api/v1/users', users);
 app.use('/api/v1/tickets', tickets);
+app.use('/api/v1/analytics', analytics);
 
 // Handle 404 routes.
 app.use(notFoundPage);

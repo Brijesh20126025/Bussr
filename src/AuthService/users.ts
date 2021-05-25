@@ -24,9 +24,8 @@ class Users {
         return;
     }
 
-    static auth(req : Request, res : Response, next : Function) {
+    static auth(req : any, res : Response, next : Function) {
 
-        console.log("### inside the auth layer ");
         // verify the jwt token here.
         if (!req || !req.body || !req.headers || !req.headers.authorization) {
             let error : IError = {status : 400, message : "Missing required info/data"};
@@ -38,6 +37,9 @@ class Users {
         try {
             user = jwt.verify(jwtToken, constants.jwtToken);
             console.log(JSON.stringify(user));
+
+            // set the user info on request so we can access it in other middleware
+            req.user_id = user && user.data && user.data.toString(); 
             return next();
         } catch (err) {
 
@@ -45,7 +47,7 @@ class Users {
                 let error : IError = {status : 401, message : "Token expired please referesh token"};
                 return next(error);
             }
-            let error : IError = {status : 401, message : "Exception validating the jwt token"};
+            let error : IError = {status : 401, message : "Invalid token. Provide the correct token"};
             return next(error);
         }
     }

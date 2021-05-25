@@ -86,6 +86,7 @@ router.post('/createTickets', Users.auth, Tickets.createTickets, ErrorService.er
  *         schema:
  *           type: string
  *         required: true
+ *         example: 60ad4a9e253a11a86418a1cb
  *         
  *       - name: authorization
  *         description: Authorization header.
