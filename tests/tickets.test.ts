@@ -7,18 +7,23 @@ import { DatabaseService  } from '../src/DbService/dbService';
 import { collectionNames } from '../src/DbService/collectionsName';
 import { ObjectId } from 'mongodb';
 import { constants } from '../src/Constants/constants'
+import { app } from '../src/app';
 
 /*
     Create Ticket Test
 */
 
-let port = process.env.PORT || 5000;
+let port = process.env.TEST_SERVER_PORT || 3000;
 
 let baseUrl : string = `http://localhost:${port}`;
 
 describe('------ Ticket Model Tests ------ ', () => {
     // get the token.
-   
+    let server : any = null;
+    before(done => {
+        server = app.listen(port, done);
+    });
+      
     it('Sign up user & get token', (done) => {
         let requestBody : any = {
             "user_name": "bussr@test",

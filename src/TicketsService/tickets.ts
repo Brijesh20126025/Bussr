@@ -16,8 +16,6 @@ class Tickets {
 
     // ticket create
     static async createTickets(req : any, res : Response, next : Function) {
-
-        console.log("######## REQ body in app %j", req.body);
         if(!req || !req.body || !req.body.ticketData) {
             let error : IError = {status : 400, message :"Missing required data/info"};
             return next(error);
@@ -124,9 +122,6 @@ class Tickets {
          data of array will be updated.
     */
     static async upodateTickets(req : Request, res : Response, next : Function) {
-
-        console.log("===== Update in application ", req.body);
-        console.log("===== Update in application ", req.params);
         if(!req || !req.body || !req.body.ticketUpdateData || !req.params.ticket_id) {
             let error : IError = {status : 400, message :"Missing required data/info"};
             return next(error);

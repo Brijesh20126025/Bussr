@@ -1,5 +1,6 @@
 import express, {Request, Response} from "express";
 import * as bodyParser  from "body-parser";
+
 const morgan = require('morgan');
 import {users} from "./AuthService";
 import {tickets} from './TicketsService';
@@ -8,6 +9,7 @@ import {notFoundPage} from './Routes/notFound/404'
 const swaggerJSDoc = require('swagger-jsdoc');
 const swaggerUI = require('swagger-ui-express');
 
+require('events').EventEmitter.defaultMaxListeners = 50;
 
 const app : any = express();
 
@@ -81,5 +83,9 @@ app.use(notFoundPage);
 
 let PORT = process.env.PORT || 5000;
 app.listen(PORT, () => {
+    console.log("-------------------------------------------------------");
     console.log("Server running at port " + PORT);
+    console.log('-------------------------------------------------------');
 });
+
+export { app };
