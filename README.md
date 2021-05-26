@@ -53,7 +53,7 @@ Below command will automatically start the server so no need to start the server
 ```
 
 ---------------------------------------------------------------------------------
-After `npm run build` cmd. Make sure that you get a console meessage of "Server is running at port 5000". It will come after mocha tests logs.
+After `npm run build` cmd. Make sure that you get a console meessage of "Server is running at port 5000". It will come before mocha tests logs.
 
 Once app is up and running. Go to swagger APIs documentation.
 Below is the url of swagger UI.
