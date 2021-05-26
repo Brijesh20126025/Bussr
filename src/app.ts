@@ -81,11 +81,11 @@ app.use('/api/v1/analytics', analytics);
 // Handle 404 routes.
 app.use(notFoundPage);
 
-let PORT = process.env.PORT || 5000;
-app.listen(PORT, () => {
-    console.log("-------------------------------------------------------");
-    console.log("Server running at port " + PORT);
-    console.log('-------------------------------------------------------');
-});
+//let PORT = process.env.PORT || 5000;
+// app.listen(PORT, () => {
+//     console.log("-------------------------------------------------------");
+//     console.log("Server running at port " + PORT);
+//     console.log('-------------------------------------------------------');
+// });
 
 export { app };

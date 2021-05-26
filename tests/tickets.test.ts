@@ -13,7 +13,7 @@ import { app } from '../src/app';
     Create Ticket Test
 */
 
-let port = process.env.TEST_SERVER_PORT || 3000;
+let port = process.env.TEST_SERVER_PORT || 5000;
 
 let baseUrl : string = `http://localhost:${port}`;
 
@@ -22,7 +22,10 @@ describe('------ Ticket Model Tests ------ ', () => {
     // some test cases are calling the APIs.
     let server : any = null;
     before(done => {
+        console.log("-------------------------------------------------------");
         server = app.listen(port, done);
+        console.log("Server running at port " + port);
+        console.log('-------------------------------------------------------');
     });
       
     it('Sign up user & get token', (done) => {
