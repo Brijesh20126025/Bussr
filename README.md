@@ -7,8 +7,8 @@
       - update a ticket
       - delete a ticket
        
-2. All the analytics
-     - profi analytics
+2. All the analytics (using both DB aggreagation & using own JS logic/algo)
+     - profit analytics
      - user visit analytics
      
  3. A nice swagger UI, with all the details in example. (http://localhost:5000/api-docs/)
