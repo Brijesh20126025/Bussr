@@ -23,7 +23,7 @@ class Analytics {
         //req will contain two dates & analytics method b/w which we need to perform the analytics.
         let startDate : any = req.query.start_date;
         let endDate : any = req.query.end_date;
-        let analyticsMethod : any = req.query.method;
+        let analyticsMethod : any = !(req.query.analytics_method) ? constants.analyticsMethod[1] : req.query.analytics_method;
 
         if(!dateUtils.isValidDateString(startDate) || !dateUtils.isValidDateString(endDate)) {
             let error : IError = {
@@ -42,7 +42,7 @@ class Analytics {
             endDate = dateUtils.convertToDate(endDate);
         } catch(ex : any) {
 
-            console.log('### Analytics :: Exception date converting ', ex && ex.message);
+            console.error('### Analytics :: Exception date converting ', ex && ex.message);
             let error : IError = {
                 status : 500,
                 message : 'Exception converting the start/end date to date type',
