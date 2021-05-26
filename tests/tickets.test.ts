@@ -18,7 +18,8 @@ let port = process.env.TEST_SERVER_PORT || 3000;
 let baseUrl : string = `http://localhost:${port}`;
 
 describe('------ Ticket Model Tests ------ ', () => {
-    // get the token.
+    // start the server during the npm test run because 
+    // some test cases are calling the APIs.
     let server : any = null;
     before(done => {
         server = app.listen(port, done);
