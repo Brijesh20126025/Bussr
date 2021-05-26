@@ -7,8 +7,8 @@
       - update a ticket
       - delete a ticket
        
-2. All the analytics
-     - profi analytics
+2. All the analytics (using both DB aggreagation & using own JS logic/algo)
+     - profit analytics
      - user visit analytics
      
  3. A nice swagger UI, with all the details in example. (http://localhost:5000/api-docs/)
@@ -20,14 +20,14 @@
      - ticket delete API test added
      - register user API test added
      
- Note - Could not add the dockerization in app due to time limit. (make sure to run the app locally and test it from swgger APIs)
+ Note - Could not add the dockerization in app due to time limit. (make sure to run the app locally and test it from swagger APIs)
 `````````
 
 ## Getting Started
 
 The project is writeen in Typescript. So make sure typescript is installed in your system globally.
 
-These instructions will get you a copy of the project up and running on your local machine for development and testing purposes. See deployment for notes on how to deploy the project on a live system.
+These instructions will get you a copy of the project up and running on your local machine for development and testing purposes.
 
 ### Prerequisites
 
@@ -36,7 +36,7 @@ These instructions will get you a copy of the project up and running on your loc
 
 ### Installing
 
-A step by step series of examples that tell you have to get a development env running
+A step by step series of examples that tell you how to get a development env running
 
 
 ```
@@ -53,14 +53,14 @@ Below command will automatically start the server so no need to start the server
 ```
 
 ---------------------------------------------------------------------------------
-After `npm run build` cmd. Make sure that you get a console meessage of "Server is running at port 5000". It will come after cases logs.
+After `npm run build` cmd. Make sure that you get a console meessage of "Server is running at port 5000". It will come before mocha tests logs.
 
-Once app is up and running. Go to swagger API documentation.
+Once app is up and running. Go to swagger APIs documentation.
 Below is the url of swagger UI.
 
 The below API will open the swagger UI interface with all the details mentioned in all the APIs. 
 Click on any API and click on the option `Try it out` button.
-I have mentioned all the required paramenters and request body format in example. 
+I have mentioned all the required paramenters and request body/query/params format in example. 
 Take a look and edit the given fields and hit `execute` button.
 
 ````````````````
@@ -77,13 +77,14 @@ curl -X 'POST' \
   -H 'accept: application/json' \
   -H 'Content-Type: application/json' \
   -d '{
-  "user_name": "bussr", // paas your user_name
-  "password": "bussr123" // paas your pwd
+  "user_name": "bussr", // enter your user_name
+  "password": "bussr123" // enter your pwd
 }'
 
-With the above register API you will receive the "token" which you will have to pass in header of other APIs
-Note - Token is valid for 2 hours only. If you a token which is expired you will receive the "token expired error" from other APIs
+With the above register API you will receive the "token" which you will have to pass in header of other APIs call
+Note - Token is valid for 2 hours only. If you use a token which is expired. You will receive the "token expired error" from other APIs
+If this is the case then again using the same `register` API get a new token.
 
 
 Step 2 - 
-Once you get the toke paas this token in other API's header to access them.
+Once you get the token paas this token in other API's header to access them.
