@@ -20,7 +20,7 @@
      - ticket delete API test added
      - register user API test added
      
- Note - Could not add the dockerization in app due to time limit. (make sure to run the app locally and test it from swgger APIs)
+ Note - Could not add the dockerization in app due to time limit. (make sure to run the app locally and test it from swagger APIs)
 `````````
 
 ## Getting Started
