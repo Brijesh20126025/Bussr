@@ -16,6 +16,7 @@ class DatabaseService {
                 });
             }
             catch(ex : any) {
+                db.close();
                 console.error('### DB error ' + collectionName);
                 return resolve({err : ex, result : null});
             }
@@ -36,6 +37,7 @@ class DatabaseService {
                 });
             }
             catch(ex : any) {
+                db.close();
                 console.error('### DB error ' + collectionName);
                 return resolve({err : ex, result : null});
             }
@@ -57,6 +59,7 @@ class DatabaseService {
                 });
             }
             catch(ex : any) {
+                db.close();
                 console.error('### DB error ' + collectionName);
                 return resolve({err : ex, result : null});
             }
