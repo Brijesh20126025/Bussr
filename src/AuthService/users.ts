@@ -26,6 +26,8 @@ class Users {
 
     static auth(req : any, res : Response, next : Function) {
 
+        console.log("Auth layer header %j", req.headers);
+        console.log("Auth layer body %j", req.body);
         // verify the jwt token here.
         if (!req || !req.body || !req.headers || !req.headers.authorization) {
             let error : IError = {status : 400, message : "Missing required info/data"};

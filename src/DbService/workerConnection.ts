@@ -15,7 +15,7 @@ class DbService {
             });
             db.on('open', (err : any) => {
                 // we're connected!
-                console.log("We are now connected to db " + dbName);
+               // console.log("We are now connected to db " + dbName);
                // console.log("### Worker connection ", db);
 
                 // cache the connection. (if need it else ignore)
@@ -24,7 +24,7 @@ class DbService {
             });
 
             db.on('close', () => {
-                console.info("#Db connection closed " + dbName);
+              //  console.info("#Db connection closed " + dbName);
             });
         })
     }
@@ -40,8 +40,7 @@ class DbService {
         });
         db.on('open', (err : any) => {
             // we're connected!
-            console.log("We are now connected to db " + dbName);
-            console.log("### Worker connection ", db);
+            //console.info("We are now connected to db " + dbName);
 
             // cache the connection.
             process.env.dbConn = db;
@@ -49,7 +48,7 @@ class DbService {
         });
 
         db.on('close', () => {
-            console.info("#Db connection closed " + dbName);
+            //console.info("#Db connection closed " + dbName);
             db.close();
         });
     }
